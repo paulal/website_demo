@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+
+{% block app_content %}
+    <h1>{{ 'Finna-rajapinnan kokeilua' }}</h1>
+    <p>
+    {{ 'Tällä sivulla voit hakea Finnasta kirjojen tietoja. 
+    Voit valita, mihin kenttiin haluat kohdistaa haun 
+    ja minkä kielisiä kirjoja tuloksissa palautuu.' }}
+    </p>
+    <div class="row">
+        <div class="col-md-4">
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.target.label }}<br>
+                    {{ form.target(class="form-control") }}
+                </p>
+                <p>
+                    {{ form.language.label }}<br>
+                    {{ form.language(class="form-control") }}
+                </p>
+                <p>
+                    {{ form.search_term.label }}<br>
+                    {{ form.search_term(size=32) }}
+                </p>
+                <p>{{ form.submit() }}</p>
+            </form>
+        </div>
+    </div>
+    {% if records %}
+    {% for rec in records %}
+    <p>{{ rec['author'] }}: {{ rec['title'] }}</p>
+    {% endfor %}
+    {% endif %}
+
+{% endblock %}
