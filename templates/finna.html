@@ -2,10 +2,10 @@
 
 
 {% block app_content %}
-    <h1>{{ 'Finna-rajapinnan kokeilua' }}</h1>
+    <h1>{{ 'Finna-rajapinta' }}</h1>
     <p>
     {{ 'Tällä sivulla voit hakea Finnasta kirjojen tietoja. 
-    Voit valita, mihin kenttiin haluat kohdistaa haun 
+    Voit valita, mihin kenttään haluat kohdistaa haun 
     ja minkä kielisiä kirjoja tuloksissa palautuu.' }}
     </p>
     <div class="row">
@@ -22,7 +22,7 @@
                 </p>
                 <p>
                     {{ form.search_term.label }}<br>
-                    {{ form.search_term(size=32) }}
+                    {{ form.search_term(class="form-control") }}
                 </p>
                 <p>{{ form.submit() }}</p>
             </form>
