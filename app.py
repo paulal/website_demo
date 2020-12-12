@@ -185,7 +185,7 @@ def plotting():
                         otsikko = otsikko + str(coeff) + " * " + nome + " + "
                     else:
                         otsikko = otsikko[:-2] + "- " + str(coeff).lstrip('-') + " * " + nome + " + "
-            otsikko = "y = " + otsikko.rstrip(' +*')
+            otsikko = "y = " + otsikko.rstrip(' +*').replace('.', ',')
 
             # create the data to plot
             x = np.linspace(-5, 5, 100)
