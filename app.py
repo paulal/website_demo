@@ -91,7 +91,7 @@ def finna():
 
             # parse book data
             for rec in result['records']:
-                print('rec = ', rec)
+                #print('rec = ', rec)
                 tree = ET.fromstring(rec['fullRecord'])
                 record = {}
                 
@@ -131,7 +131,7 @@ def finna():
 
                 
             records = [json.loads(x) for x in records_set]
-            print(f'records: {records}')
+            #print(f'records: {records}')
             
             return render_template('finna.html', title='Finna-haku',
                                form=form, result=result, records=records)
@@ -182,9 +182,9 @@ def plotting():
             ['x^4', 'x^3', 'x^2', 'x', '']):
                 if coeff != 0:
                     if coeff > 0:
-                        otsikko = otsikko + str(coeff) + " * " + nome + " + "
+                        otsikko = otsikko + str(coeff) + nome + " + "
                     else:
-                        otsikko = otsikko[:-2] + "- " + str(coeff).lstrip('-') + " * " + nome + " + "
+                        otsikko = otsikko[:-2] + "- " + str(coeff).lstrip('-') + nome + " + "
             otsikko = "y = " + otsikko.rstrip(' +*').replace('.', ',')
 
             # create the data to plot
@@ -199,6 +199,8 @@ def plotting():
             ax.set_title(otsikko)
             ax.axhline(y=0, color='k')
             ax.axvline(x=0, color='k')
+            ax.set_xlabel('x')
+            ax.set_ylabel('y')
             ax.grid()
 
             # save it to a temporary buffer

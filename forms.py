@@ -11,7 +11,12 @@ class FinnaForm(FlaskForm):
     language = SelectField('Teosten kieli', 
                          choices=[('fin', 'Suomi'), 
                          ('eng', 'Englanti'), 
+                         ('spa', 'Espanja'),
+                         ('jpn', 'Japani'),
+                         ('fre', 'Ranska'),
                          ('swe', 'Ruotsi'),
+                         ('rus', 'Venäjä'),
+                         ('est', 'Viro'),
                          ('all', 'Kaikki')])
 
     search_term = StringField('Hakusana(t):', validators=[DataRequired()])
