@@ -1,4 +1,7 @@
 __pycache__
 venv
+.env
 config.py
 .git
+muistiinpanoja.txt
+*.pyc

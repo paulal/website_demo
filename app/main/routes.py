@@ -1,11 +1,10 @@
-from flask import Flask, render_template, make_response, request, redirect, flash, url_for
-from config import Config
-from flask_bootstrap import Bootstrap
+from flask import render_template, make_response, request, redirect, flash, url_for
 from datetime import datetime
 import xml.etree.ElementTree as ET
 import json
 from finna_client import *
-from forms import FinnaForm, PlottingForm
+from app.main import bp
+from app.main.forms import FinnaForm, PlottingForm
 import re
 import wikipedia
 import random
@@ -15,25 +14,19 @@ import base64
 from io import BytesIO
 
 
-# create a flask object
-app = Flask(__name__)
-app.config.from_object(Config)
-
-bootstrap = Bootstrap(app)
-
 # define routes
-@app.route('/')
-@app.route('/index')
+@bp.route('/')
+@bp.route('/index')
 def index():
     return render_template('index.html')
 
 
-@app.route('/<page_name>')
+@bp.route('/<page_name>')
 def other_page(page_name):
     response = make_response('The page named %s does not exist.' % page_name, 404)
     return response
 
-@app.route('/wikipedia_page')
+@bp.route('/wikipedia_page')
 def wikipedia_page():
     topics = ['Helsinki', 'Kuopio', 'Turku', 'Maakunta-_ja_soteuudistus',
     'Tiikeri', 'Sademetsäkäpinkäinen', 'Lineaarinen_regressioanalyysi',
@@ -54,7 +47,7 @@ def wikipedia_page():
     topic=topic, heading=heading, summary=summary, image=image)
 
 
-@app.route('/finna', methods=['GET', 'POST'])
+@bp.route('/finna', methods=['GET', 'POST'])
 def finna():
     if request.method == 'GET':
         form = FinnaForm()
@@ -74,7 +67,7 @@ def finna():
                               fields=['fullRecord'],
                               filters=['format:0/Book/'], 
                               limit=50)
-                print(f'result: {result}')
+                #print(f'result: {result}')
             else:
                 result = finna.search(form.search_term.data,
                               search_type=FinnaSearchType.Title,
@@ -139,7 +132,7 @@ def finna():
         return render_template('finna.html', title='Finna-haku', form=form)
 
 
-@app.route('/plotting', methods=['GET', 'POST'])
+@bp.route('/plotting', methods=['GET', 'POST'])
 def plotting():
     if request.method == 'GET':
         form = PlottingForm()
@@ -186,6 +179,7 @@ def plotting():
                     else:
                         otsikko = otsikko[:-2] + "- " + str(coeff).lstrip('-') + nome + " + "
             otsikko = "y = " + otsikko.rstrip(' +*').replace('.', ',')
+            print('otsikko: ', otsikko)
 
             # create the data to plot
             x = np.linspace(-5, 5, 100)
@@ -216,6 +210,3 @@ def plotting():
         flash('Tarkista syöttämäsi arvot.')
         return render_template('plotting.html', title='Kuvaaja',
                                form=form)
-
-if __name__=='__main__':
-    app.run()

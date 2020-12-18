@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, SelectField, IntegerField, DecimalField, FloatField, RadioField, DateField, BooleanField
-from wtforms.validators import Optional, ValidationError, DataRequired, Length, NumberRange
+from wtforms import StringField, SubmitField, TextAreaField, SelectField, IntegerField, DecimalField, FloatField
+from wtforms.validators import Optional, ValidationError, DataRequired
 
-from helpers import FlexibleFloatField
+from app.main.helpers import FlexibleFloatField
 
 class FinnaForm(FlaskForm):
     target = SelectField('Haun kohdekenttä', 
