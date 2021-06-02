@@ -3,7 +3,7 @@
 {% block app_content %}
 
 <h1>Piirrä polynomin kuvaaja</h1>
-<p>Määritä polynomin kertoimet ja napsauta Piirrä-painiketta.</p>
+<p>Määritä polynomin kertoimet:</p>
 <div class="row">
     <div class="col-md-5">
         <form action="" method="post" novalidate>
@@ -13,7 +13,9 @@
                 {{ form.x3(size=2) }} * x<sup>3</sup> + 
                 {{ form.x2(size=2) }} * x<sup>2</sup> + 
                 {{ form.x1(size=2) }} * x + {{ form.const(size=2) }}
-                
+            </p>
+            <p>
+                X-akselin arvoväli: {{ form.x_start(size=6) }} &ndash; {{ form.x_end(size=6) }}
             </p>
             <p>{{ form.submit() }}</p>
         </form>

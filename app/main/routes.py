@@ -167,8 +167,15 @@ def plotting():
                 x4 = form.x4.data
             else:
                 x4 = 0
+            if form.x_start.data:
+                x_start = form.x_start.data
+            else:
+                x_start = -5
+            if form.x_end.data:
+                x_end = form.x_end.data
+            else:
+                x_end = 5
             
-
             # form the figure title
             otsikko = ''
             for coeff, nome in zip([x4, x3, x2, x1, const], 
@@ -178,11 +185,11 @@ def plotting():
                         otsikko = otsikko + str(coeff) + nome + " + "
                     else:
                         otsikko = otsikko[:-2] + "- " + str(coeff).lstrip('-') + nome + " + "
-            otsikko = "y = " + otsikko.rstrip(' +*').replace('.', ',')
+            otsikko = f"y = {otsikko.rstrip(' +*')} x:n arvoilla {x_start} ≤ x ≤ {x_end}".replace('.', ',')
             print('otsikko: ', otsikko)
 
             # create the data to plot
-            x = np.linspace(-5, 5, 100)
+            x = np.linspace(x_start, x_end, 100)
             y = const + x1 * x + x2 * x **2 + x3 * x ** 3 + x4 * x ** 4
             
             # generate the figure

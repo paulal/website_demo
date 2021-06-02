@@ -21,6 +21,7 @@ class FinnaForm(FlaskForm):
 
     search_term = StringField('Hakusana(t):', validators=[DataRequired()])
     submit = SubmitField('Hae')
+    
 
 class PlottingForm(FlaskForm):
     const = FlexibleFloatField('Vakio', default=0, validators=[Optional()])
@@ -28,5 +29,8 @@ class PlottingForm(FlaskForm):
     x2 = FlexibleFloatField('X2', default=0, validators=[Optional()])
     x3 = FlexibleFloatField('X3', default=0, validators=[Optional()])
     x4 = FlexibleFloatField('X4', default=0, validators=[Optional()])
+    
+    x_start = FlexibleFloatField('X-akselin arvovälin alku:', default=-5, validators=[Optional()])
+    x_end = FlexibleFloatField('X-akselin arvovälin loppu:', default=5, validators=[Optional()])
 
     submit = SubmitField('Piirrä')
