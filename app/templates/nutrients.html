@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+
+<h1>Päivittäisten ravinteiden optimointi</h1>
+<p>Määritä tähän, mitä haluat tänään syödä (tai olet jo syönyt), niin saat tietää, mitä syömällä lisää saat päivittäiset saantisuositukset täytettyä mahdollisin vähin kalorein.</p>
+<p>Tiedot perustuvat Terveyden ja hyvinvoinnin laitoksen Fineli-tietokannan versioon 20.</p>
+<div class="row">
+    <div class="col-md-5">
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.x4(size=2) }} * x<sup>4</sup> + 
+                {{ form.x3(size=2) }} * x<sup>3</sup> + 
+                {{ form.x2(size=2) }} * x<sup>2</sup> + 
+                {{ form.x1(size=2) }} * x + {{ form.const(size=2) }}
+            </p>
+            <p>
+                X-akselin arvoväli: {{ form.x_start(size=6) }} &ndash; {{ form.x_end(size=6) }}
+            </p>
+            <p>{{ form.submit() }}</p>
+        </form>
+    </div>
+</div>
+{% if data %}
+<div><img src='data:image/png;base64,{{data}}'/></div>
+{% endif %}
+
+{% endblock %}

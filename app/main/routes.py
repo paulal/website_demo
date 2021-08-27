@@ -1,17 +1,19 @@
-from flask import render_template, make_response, request, redirect, flash, url_for
 from datetime import datetime
+import re
+from io import BytesIO
+import random
+
+from flask import render_template, make_response, request, redirect, flash, url_for
 import xml.etree.ElementTree as ET
 import json
 from finna_client import *
-from app.main import bp
-from app.main.forms import FinnaForm, PlottingForm
-import re
 import wikipedia
-import random
 from matplotlib.figure import Figure
 import numpy as np
 import base64
-from io import BytesIO
+
+from app.main import bp
+from app.main.forms import FinnaForm, PlottingForm
 
 
 # define routes
@@ -217,3 +219,9 @@ def plotting():
         flash('Tarkista syöttämäsi arvot.')
         return render_template('plotting.html', title='Kuvaaja',
                                form=form)
+
+
+@bp.route('/nutrients', methods=['GET', 'POST'])
+def nutrients():
+    if request.method == 'GET':
+        form = NutrientForm()
