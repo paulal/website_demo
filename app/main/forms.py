@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, IntegerField, DecimalField, FloatField
-from wtforms.validators import Optional, ValidationError, DataRequired
+from wtforms.validators import Optional, ValidationError, DataRequired, NumberRange
 
-from app.main.helpers import FlexibleFloatField
+from app.main.helpers import FlexibleFloatField, get_food_names
+
 
 class FinnaForm(FlaskForm):
     target = SelectField('Haun kohdekenttä', 
@@ -34,3 +35,9 @@ class PlottingForm(FlaskForm):
     x_end = FlexibleFloatField('X-akselin arvovälin loppu:', default=5, validators=[Optional()])
 
     submit = SubmitField('Piirrä')
+    
+
+class NutrientForm(FlaskForm):
+    food = StringField('Ruoka', validators=[DataRequired(message="Ruoka puuttuu")])
+    amount = FlexibleFloatField('Määrä', validators=[Optional(), NumberRange(min=0.1)])
+    submit = SubmitField('Laske')

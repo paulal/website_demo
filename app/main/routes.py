@@ -2,8 +2,9 @@ from datetime import datetime
 import re
 from io import BytesIO
 import random
+import sqlite3
 
-from flask import render_template, make_response, request, redirect, flash, url_for
+from flask import render_template, make_response, request, redirect, flash, url_for, jsonify
 import xml.etree.ElementTree as ET
 import json
 from finna_client import *
@@ -13,7 +14,7 @@ import numpy as np
 import base64
 
 from app.main import bp
-from app.main.forms import FinnaForm, PlottingForm
+from app.main.forms import FinnaForm, PlottingForm, NutrientForm
 
 
 # define routes
@@ -225,3 +226,49 @@ def plotting():
 def nutrients():
     if request.method == 'GET':
         form = NutrientForm()
+        return render_template('nutrients.html', title='Ravintoaineet',
+                               form=form)
+    elif request.method == 'POST':
+        form = NutrientForm()
+        
+        if form.validate_on_submit():
+            print('form validated')
+            
+            # get the food and amount
+            food_id = form.food.data
+            print(food_id)
+            amount = form.amount.data
+            
+            return render_template('nutrients.html', title='Ravintoaineet',
+                               form=form, data_given=(food_id, amount))
+        
+        flash('Tarkista syöttämäsi arvot.')
+        return render_template('nutrients.html', title='Ravintoaineet',
+                               form=form)
+
+@bp.route('/autocomplete_food', methods=['GET'])
+def autocomplete_food():
+    search = request.args.get('q')
+    arg = "%" + str(search) + "%"  # note: no manually added quotes around the argument
+    print("arg:", arg)
+    with sqlite3.connect('fineli.db') as conn:
+        # the next line prints the full sql query if uncommented
+        #conn.set_trace_callback(print)
+        curs = conn.cursor()
+        try:
+            stmt = "SELECT foodname FROM food WHERE foodname LIKE ?"
+            args = (arg,)
+            print(stmt)
+            #return [(x[0], x[1]) for x in curs.execute(stmt)]
+            curs.execute(stmt, args)
+            #foods = curs.fetchall()
+            results = [food[0] for food in curs.fetchall()]
+            print(results)
+            return jsonify(matching_results=results)
+        except Exception as e:
+            print(e)
+        finally:
+            if curs:
+                curs.close()
+
+
