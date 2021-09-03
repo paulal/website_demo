@@ -15,6 +15,7 @@ import base64
 
 from app.main import bp
 from app.main.forms import FinnaForm, PlottingForm, NutrientForm
+from app.main.helpers import get_rda
 
 
 # define routes
@@ -233,11 +234,41 @@ def nutrients():
         
         if form.validate_on_submit():
             print('form validated')
+            rda = get_rda("nkeski")
+            print(rda.tail())
             
-            # get the food and amount
-            food_id = form.food.data
-            print(food_id)
-            amount = form.amount.data
+            # get data from the db
+            with sqlite3.connect('fineli.db') as conn:
+                # the next line prints the full sql query if uncommented
+                #conn.set_trace_callback(print)
+                curs = conn.cursor()
+                try:
+                    # get the food id
+                    stmt = "SELECT foodid FROM food WHERE foodname = ?"
+                    args = (form.food.data,)
+                    #return [(x[0], x[1]) for x in curs.execute(stmt)]
+                    curs.execute(stmt, args)
+                    food = curs.fetchone()
+                    if food:
+                        food_id = food[0]
+                        amount = form.amount.data
+                        # get the nutrient content of the given food
+                        stmt2 = "SELECT eufdname, bestloc / 100.0 * ? FROM component_value WHERE foodid = ?"
+                        args2 = (amount, food_id)
+                        curs.execute(stmt2, args2)
+                        print(curs.fetchall()[:6])
+                    else:
+                        flash('Valitse ruoka listasta.')
+                        return render_template('nutrients.html', title='Ravintoaineet',
+                               form=form)
+                    
+                    
+                except Exception as e:
+                    print(e)
+                finally:
+                    if curs:
+                        curs.close()
+            
             
             return render_template('nutrients.html', title='Ravintoaineet',
                                form=form, data_given=(food_id, amount))
@@ -263,7 +294,7 @@ def autocomplete_food():
             curs.execute(stmt, args)
             #foods = curs.fetchall()
             results = [food[0] for food in curs.fetchall()]
-            print(results)
+            #print(results)
             return jsonify(matching_results=results)
         except Exception as e:
             print(e)

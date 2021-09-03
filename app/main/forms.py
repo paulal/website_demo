@@ -39,5 +39,7 @@ class PlottingForm(FlaskForm):
 
 class NutrientForm(FlaskForm):
     food = StringField('Ruoka', validators=[DataRequired(message="Ruoka puuttuu")])
-    amount = FlexibleFloatField('Määrä', validators=[Optional(), NumberRange(min=0.1)])
+    amount = FlexibleFloatField('Määrä (grammoina)',
+                                validators=[DataRequired(message="Määrä puuttuu"),
+                                            NumberRange(min=0.1)])
     submit = SubmitField('Laske')

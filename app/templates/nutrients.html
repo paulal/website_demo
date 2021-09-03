@@ -3,8 +3,8 @@
 {% block app_content %}
 
 <h1>Päivittäisten ravinteiden optimointi</h1>
-<p>Määritä tähän, mitä haluat tänään syödä (tai olet jo syönyt), niin algoritmi laskee, mitä syömällä lisää saat päivittäiset saantisuositukset täytettyä mahdollisin vähin kalorein.</p>
-<p>Tällä hetkellä määrä pitää antaa grammoina.</p>
+<p>Määritä tähän, mitä haluat tänään syödä (tai olet jo syönyt), niin algoritmi laskee, mitä tarvitset sen lisäksi, jotta saat päivittäiset saantisuositukset täytettyä mahdollisin vähin kalorein.</p>
+<p><strong>Huomautus:</strong> Tämä sivu on työn alla eikä algoritmi ole vielä valmis.</p>
 <p>Ruokien ravintosisällöt ovat peräisin Terveyden ja hyvinvoinnin laitoksen Fineli-tietokannan versiosta 20.</p>
 <div class="row">
     <div class="col-md-5">
@@ -25,6 +25,12 @@
         </div>
     </div>
     <br>
+{% if data_given %}
+    <div>
+        {{ data_given[1] }} grammaa: {{ data_given[0] }}
+    </div>
+{% endif %}
+
 {% endblock %}
 
 {% block scripts %}

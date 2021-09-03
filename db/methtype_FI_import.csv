@@ -1,17 +1,17 @@
-A;analyyttiset tulokset;FI
-AG;analysoitu;FI
-CG;laskennallinen;FI
-D;analysoiduista tuloksista summaamalla johdettu;FI
-E;muu arvon tyyppi;FI
-G;laskettu aggregoimalla elintarvikkeita;FI
-I;johdettu samankaltaisesta elintarvikkeesta;FI
-IG;johdettu;FI
-K;laskettu samankaltaisesta elintarvikkeesta;FI
-L;johdettu lainsäädännön mukaan;FI
-O;johdettu toisesta elintarvikkeesta;FI
-P;laskettu koostumustiedoista;FI
-R;laskettu reseptistä;FI
-S;summattu osatekijöistä;FI
-T;laskettu kertoimilla;FI
-U;loogisesti arvioitu;FI
-X;ei tiedossa;FI
+a;analyyttiset tulokset;fi
+ag;analysoitu;fi
+cg;laskennallinen;fi
+d;analysoiduista tuloksista summaamalla johdettu;fi
+e;muu arvon tyyppi;fi
+g;laskettu aggregoimalla elintarvikkeita;fi
+i;johdettu samankaltaisesta elintarvikkeesta;fi
+ig;johdettu;fi
+k;laskettu samankaltaisesta elintarvikkeesta;fi
+l;johdettu lainsäädännön mukaan;fi
+o;johdettu toisesta elintarvikkeesta;fi
+p;laskettu koostumustiedoista;fi
+r;laskettu reseptistä;fi
+s;summattu osatekijöistä;fi
+t;laskettu kertoimilla;fi
+u;loogisesti arvioitu;fi
+x;ei tiedossa;fi

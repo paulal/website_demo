@@ -1,18 +1,18 @@
-BAK;Uunissa paistettu;FI
-BOIL;Keitetty;FI
-BOILDR;Keitetty, valutettu;FI
-CANN;Säilötty;FI
-DRIE;Kuivattu;FI
-FRIE;Paistettu;FI
-FROZ;Pakastettu;FI
-GRIL;Grillattu;FI
-IND;Teollinen;FI
-MASH;Soseutettu;FI
-MIX;Sekoitettu;FI
-RAW;Käsittelemätön tai tuore;FI
-ROAS;Paahdettu;FI
-SALT;Suolattu;FI
-SEMI;Puolivalmiste;FI
-SMOK;Savustettu;FI
-SOUR;Hapatettu;FI
-X;Määrittelemätön;FI
+bak;uunissa paistettu;fi
+boil;keitetty;fi
+boildr;keitetty, valutettu;fi
+cann;säilötty;fi
+drie;kuivattu;fi
+frie;paistettu;fi
+froz;pakastettu;fi
+gril;grillattu;fi
+ind;teollinen;fi
+mash;soseutettu;fi
+mix;sekoitettu;fi
+raw;käsittelemätön tai tuore;fi
+roas;paahdettu;fi
+salt;suolattu;fi
+semi;puolivalmiste;fi
+smok;savustettu;fi
+sour;hapatettu;fi
+x;määrittelemätön;fi

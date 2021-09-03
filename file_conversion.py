@@ -12,4 +12,4 @@ for source_filename in source_names:
         with open(target_filename, mode='w', encoding='utf-8') as target_file:
             contents = list(source_file)
             for line in contents[1:]:
-                target_file.write(line)
+                target_file.write(line.lower())

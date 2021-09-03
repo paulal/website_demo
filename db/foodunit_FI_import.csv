@@ -1,15 +1,15 @@
-KG;kilogramma;FI
-DL;desilitra;FI
-L;litra;FI
-RKL;ruokalusikka;FI
-TL;teelusikka;FI
-KPL_S;pieni (kpl);FI
-KPL_M;keskikokoinen (kpl);FI
-KPL_L;iso (kpl);FI
-KPL_VALM;Valmistaja (kpl);FI
-PORTS;pieni annos;FI
-PORTM;keskikokoinen annos;FI
-PORTL;iso annos;FI
-PORTTBL;Elintarviketaulukossa käytetty annos;FI
-SPLPORT;kappaletta annosta;FI
-PORT1000KJ;Annoksen koko, joka vastaa 1000kJ;FI
+kg;kilogramma;fi
+dl;desilitra;fi
+l;litra;fi
+rkl;ruokalusikka;fi
+tl;teelusikka;fi
+kpl_s;pieni (kpl);fi
+kpl_m;keskikokoinen (kpl);fi
+kpl_l;iso (kpl);fi
+kpl_valm;valmistaja (kpl);fi
+ports;pieni annos;fi
+portm;keskikokoinen annos;fi
+portl;iso annos;fi
+porttbl;elintarviketaulukossa käytetty annos;fi
+splport;kappaletta annosta;fi
+port1000kj;annoksen koko, joka vastaa 1000kj;fi

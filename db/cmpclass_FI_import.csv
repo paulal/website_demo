@@ -1,53 +1,53 @@
-NUTRIENT;Ravintoaine;FI
-MACROCMP;Perusravintoaineet;FI
-ENERGY;Energia;FI
-PROTEIN;Proteiini;FI
-TOTALFAT;Rasva;FI
-TOTALCAR;Kokonaishiilihydraatti;FI
-ALCOHOL;Alkoholi;FI
-WATER;Vesi;FI
-ASH;Tuhka;FI
-DRYMATR;Kuiva-aine;FI
-CARBOCMP;Hiilihydraattifraktiot;FI
-SUGAR;Sokerit;FI
-STARCH;Tärkkelys;FI
-FIBRE;Kuitu;FI
-POLYOL;Polyolit;FI
-POLYSACC;Polysakkaridit;FI
-OLIGSACC;Oligosakkaridit;FI
-FAT;Rasva;FI
-FATACID;Rasvahapot;FI
-STEROL;Sterolit;FI
-PHOLIPID;Fosfolipidit;FI
-TRIGLYSE;Triglyseridit;FI
-MINERAL;Kivennäis- ja hivenaineet;FI
-MACROELM;Kivennäisaineet;FI
-TRACEELM;Hivenaineet;FI
-NITROCMP;Typpiyhdisteet;FI
-NITROGEN;Typpi;FI
-AMACID;Aminohapot;FI
-VITAM;Vitamiinit;FI
-FSVITAM;Rasvaliukoiset vitamiinit;FI
-WSVITAM;Vesiliukoiset vitamiinit;FI
-ORGACID;Orgaaniset hapot;FI
-MISC;Sekalaiset ravintotekijät;FI
-NATINHCN;Luontainen ainesosa;FI
-FLAVON;Flavonoidit;FI
-NITRATE;Nitraatti;FI
-OXAACID;Oksaalihappo;FI
-PHYACID;Fytiinihappo;FI
-PHYESTRO;Fytoestrogeenit;FI
-TANNIN;Tanniinit;FI
-INOSITOL;Inositoli;FI
-PURINE;Puriinit;FI
-BIOAMIN;Biogeeniset amiinit;FI
-BIOTOXIN;Biologiset toksiinit;FI
-ADDITIVE;Lisäaineet;FI
-CONT;Vierasaineet;FI
-ORGCONT;Orgaaniset kontaminantit;FI
-PCB;PCB;FI
-DIOXIN;Dioksiinit;FI
-INOCONT;Epäorgaaniset kontaminantit;FI
-HVYMETAL;Raskasmetallit;FI
-PESTICID;Torjunta-aineet;FI
-OTHER;Muut ainesosat;FI
+nutrient;ravintoaine;fi
+macrocmp;perusravintoaineet;fi
+energy;energia;fi
+protein;proteiini;fi
+totalfat;rasva;fi
+totalcar;kokonaishiilihydraatti;fi
+alcohol;alkoholi;fi
+water;vesi;fi
+ash;tuhka;fi
+drymatr;kuiva-aine;fi
+carbocmp;hiilihydraattifraktiot;fi
+sugar;sokerit;fi
+starch;tärkkelys;fi
+fibre;kuitu;fi
+polyol;polyolit;fi
+polysacc;polysakkaridit;fi
+oligsacc;oligosakkaridit;fi
+fat;rasva;fi
+fatacid;rasvahapot;fi
+sterol;sterolit;fi
+pholipid;fosfolipidit;fi
+triglyse;triglyseridit;fi
+mineral;kivennäis- ja hivenaineet;fi
+macroelm;kivennäisaineet;fi
+traceelm;hivenaineet;fi
+nitrocmp;typpiyhdisteet;fi
+nitrogen;typpi;fi
+amacid;aminohapot;fi
+vitam;vitamiinit;fi
+fsvitam;rasvaliukoiset vitamiinit;fi
+wsvitam;vesiliukoiset vitamiinit;fi
+orgacid;orgaaniset hapot;fi
+misc;sekalaiset ravintotekijät;fi
+natinhcn;luontainen ainesosa;fi
+flavon;flavonoidit;fi
+nitrate;nitraatti;fi
+oxaacid;oksaalihappo;fi
+phyacid;fytiinihappo;fi
+phyestro;fytoestrogeenit;fi
+tannin;tanniinit;fi
+inositol;inositoli;fi
+purine;puriinit;fi
+bioamin;biogeeniset amiinit;fi
+biotoxin;biologiset toksiinit;fi
+additive;lisäaineet;fi
+cont;vierasaineet;fi
+orgcont;orgaaniset kontaminantit;fi
+pcb;pcb;fi
+dioxin;dioksiinit;fi
+inocont;epäorgaaniset kontaminantit;fi
+hvymetal;raskasmetallit;fi
+pesticid;torjunta-aineet;fi
+other;muut ainesosat;fi

@@ -1,11 +1,11 @@
-A;viranomaisen dokumentti;FI
-C;tieteellinen julkaisu, ei-vertaisarvioitu;FI
-D;riippumaton laboratorio;FI
-E;muu tietolähde;FI
-F;elintarvikekoostumustaulukko;FI
-I;teollisuuden laboratorio;FI
-L;tuoteseloste, tuotetiedote;FI
-O;THL:n oma laboratorio;FI
-P;tieteellinen julkaisu, vertaisarvioitu (peer reviewed);FI
-S;THL:n tuottama;FI
-X;ei tiedossa;FI
+a;viranomaisen dokumentti;fi
+c;tieteellinen julkaisu, ei-vertaisarvioitu;fi
+d;riippumaton laboratorio;fi
+e;muu tietolähde;fi
+f;elintarvikekoostumustaulukko;fi
+i;teollisuuden laboratorio;fi
+l;tuoteseloste, tuotetiedote;fi
+o;thl:n oma laboratorio;fi
+p;tieteellinen julkaisu, vertaisarvioitu (peer reviewed);fi
+s;thl:n tuottama;fi
+x;ei tiedossa;fi
