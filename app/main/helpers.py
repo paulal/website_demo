@@ -51,4 +51,5 @@ def get_rda(age:str) -> pd.DataFrame:
     # for the time being, remove sugar and salt, which have max values instead of min
     rda_selected = rda_selected[rda_selected["EUFDNAME"] != "sugar"]
     rda_selected = rda_selected[rda_selected["EUFDNAME"] != "nacl"]
-    return rda_selected
+    rda = rda_selected.rename(columns={age: "target"})
+    return rda

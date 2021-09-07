@@ -12,6 +12,7 @@ import wikipedia
 from matplotlib.figure import Figure
 import numpy as np
 import base64
+import pandas as pd
 
 from app.main import bp
 from app.main.forms import FinnaForm, PlottingForm, NutrientForm
@@ -235,7 +236,7 @@ def nutrients():
         if form.validate_on_submit():
             print('form validated')
             rda = get_rda("nkeski")
-            print(rda.tail())
+            print(rda.head())
             
             # get data from the db
             with sqlite3.connect('fineli.db') as conn:
@@ -243,20 +244,23 @@ def nutrients():
                 #conn.set_trace_callback(print)
                 curs = conn.cursor()
                 try:
-                    # get the food id
+                    # get the food id using sqlite3 cursor
                     stmt = "SELECT foodid FROM food WHERE foodname = ?"
                     args = (form.food.data,)
-                    #return [(x[0], x[1]) for x in curs.execute(stmt)]
                     curs.execute(stmt, args)
                     food = curs.fetchone()
                     if food:
                         food_id = food[0]
                         amount = form.amount.data
-                        # get the nutrient content of the given food
-                        stmt2 = "SELECT eufdname, bestloc / 100.0 * ? FROM component_value WHERE foodid = ?"
+                        # get the nutrient content of the given food using pandas
+                        stmt2 = "SELECT eufdname, bestloc / 100.0 * ? AS eaten_total FROM component_value WHERE foodid = ?"
                         args2 = (amount, food_id)
-                        curs.execute(stmt2, args2)
-                        print(curs.fetchall()[:6])
+                        eaten_df = pd.read_sql(stmt2, conn, params=args2)
+                        print(eaten_df.head())
+                        # get the remaining portion of rda to be covered by other foods
+                        remainder_df = pd.merge(rda, eaten_df, on='EUFDNAME')
+                        remainder_df["remainder"] = remainder_df["target"] - remainder_df["eaten_total"]
+                        print(remainder_df.head())
                     else:
                         flash('Valitse ruoka listasta.')
                         return render_template('nutrients.html', title='Ravintoaineet',
@@ -271,7 +275,9 @@ def nutrients():
             
             
             return render_template('nutrients.html', title='Ravintoaineet',
-                               form=form, data_given=(food_id, amount))
+                                   form=form, data_given=(food_id, amount),
+                                   tables=[remainder_df[['name', 'target', 'eaten_total', 'remainder']].to_html(classes='data', index = False)],
+                                   header=True)
         
         flash('Tarkista syöttämäsi arvot.')
         return render_template('nutrients.html', title='Ravintoaineet',
