@@ -12,4 +12,7 @@ for source_filename in source_names:
         with open(target_filename, mode='w', encoding='utf-8') as target_file:
             contents = list(source_file)
             for line in contents[1:]:
+                # change decimal separator to full stop to avoid problems with sqlite
+                if source_filename == "db/component_value.csv":
+                    line = line.replace(",", ".")
                 target_file.write(line.lower())

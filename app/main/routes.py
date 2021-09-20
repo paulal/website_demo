@@ -13,10 +13,11 @@ from matplotlib.figure import Figure
 import numpy as np
 import base64
 import pandas as pd
+import pulp
 
 from app.main import bp
 from app.main.forms import FinnaForm, PlottingForm, NutrientForm
-from app.main.helpers import get_rda
+from app.main.helpers import get_rda, get_nutrition_values_of_foods, solve_for_optimal_foods
 
 
 # define routes
@@ -237,6 +238,8 @@ def nutrients():
             print('form validated')
             rda = get_rda("nkeski")
             print(rda.head())
+            nutrient_tuple = tuple(rda["EUFDNAME"])
+            print(f"nutrient_tuple: {nutrient_tuple}")
             
             # get data from the db
             with sqlite3.connect('fineli.db') as conn:
@@ -259,8 +262,18 @@ def nutrients():
                         print(eaten_df.head())
                         # get the remaining portion of rda to be covered by other foods
                         remainder_df = pd.merge(rda, eaten_df, on='EUFDNAME')
+                        # set EUFDNAME as the new index
+                        remainder_df.set_index("EUFDNAME", inplace=True)
+                        print(f"remainder_df after set_index: {remainder_df.head()}")
+                        # sort by the EUFDNAME column/index to make sure nutrients are in the same order as in the comp_values df
+                        remainder_df = remainder_df.sort_values(by=["EUFDNAME"])
+                        # add a new column with the difference of nutrient target and the nutrients eaten
                         remainder_df["remainder"] = remainder_df["target"] - remainder_df["eaten_total"]
-                        print(remainder_df.head())
+                        print(f"remainder_df.head: {remainder_df.head()}")
+                        # get the nutrition values of foods from the database
+                        comp_values = get_nutrition_values_of_foods(conn, nutrient_tuple)
+                        optimum = solve_for_optimal_foods(remainder_df, comp_values)
+                        
                     else:
                         flash('Valitse ruoka listasta.')
                         return render_template('nutrients.html', title='Ravintoaineet',
@@ -275,9 +288,8 @@ def nutrients():
             
             
             return render_template('nutrients.html', title='Ravintoaineet',
-                                   form=form, data_given=(food_id, amount),
-                                   tables=[remainder_df[['name', 'target', 'eaten_total', 'remainder']].to_html(classes='data', index = False)],
-                                   header=True)
+                                   form=form, data_given=(food_id, amount, form.food.data),
+                                   tables=[remainder_df[['name', 'target', 'eaten_total', 'remainder', 'max']].to_html(classes='data', header = True, index = False)])
         
         flash('Tarkista syöttämäsi arvot.')
         return render_template('nutrients.html', title='Ravintoaineet',

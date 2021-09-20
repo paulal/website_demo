@@ -27,7 +27,7 @@
     <br>
 {% if data_given %}
     <div>
-        {{ data_given[1] }} grammaa ruokaa, jonka id on {{ data_given[0] }}</br>
+        {{ data_given[1] }} grammaa ruokaa {{ data_given[2] }}</br>
         Päivittäinen saantisuositus: </br>
         {% for table in tables %}
             {{ table|safe }}
