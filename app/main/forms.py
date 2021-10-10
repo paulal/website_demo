@@ -42,4 +42,5 @@ class NutrientForm(FlaskForm):
     amount = FlexibleFloatField('Määrä (grammoina)',
                                 validators=[DataRequired(message="Määrä puuttuu"),
                                             NumberRange(min=0.1)])
+    # TODO: add fields for selecting sex & age
     submit = SubmitField('Laske')

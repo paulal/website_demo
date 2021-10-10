@@ -4,8 +4,9 @@
 
 <h1>Päivittäisten ravinteiden optimointi</h1>
 <p>Määritä tähän, mitä haluat tänään syödä (tai olet jo syönyt), niin algoritmi laskee, mitä tarvitset sen lisäksi, jotta saat päivittäiset saantisuositukset täytettyä mahdollisin vähin kalorein.</p>
-<p><strong>Huomautus:</strong> Tämä sivu on työn alla eikä algoritmi ole vielä valmis.</p>
+<p><strong>Huomautus: Tämä sivu on vielä kesken!</strong></p>
 <p>Ruokien ravintosisällöt ovat peräisin Terveyden ja hyvinvoinnin laitoksen Fineli-tietokannan versiosta 20.</p>
+<p>Tällä hetkellä käytössä ovat keski-ikäisen naisen saantisuositukset. Valintamahdollisuus tulee myöhemmin.</p>
 <div class="row">
     <div class="col-md-5">
         <form action="" method="post" novalidate>
@@ -27,10 +28,12 @@
     <br>
 {% if data_given %}
     <div>
-        {{ data_given[1] }} grammaa ruokaa {{ data_given[2] }}</br>
-        Päivittäinen saantisuositus: </br>
+        Valittu ruoka: {{ data_given[2] }}, {{ data_given[1] }} grammaa<br>
+        <br>
+        Päivittäinen saantisuositus, tähän mennessä syöty, puuttuva määrä ja päivän maksimi: </br>
         {% for table in tables %}
             {{ table|safe }}
+            <br>
         {% endfor %}
     </div>
 {% endif %}

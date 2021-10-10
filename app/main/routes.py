@@ -236,7 +236,7 @@ def nutrients():
         
         if form.validate_on_submit():
             print('form validated')
-            rda = get_rda("nkeski")
+            rda = get_rda("nkeski") # TODO: add a check for user-provided sex & age
             print(rda.head())
             nutrient_tuple = tuple(rda["EUFDNAME"])
             print(f"nutrient_tuple: {nutrient_tuple}")
@@ -273,6 +273,9 @@ def nutrients():
                         # get the nutrition values of foods from the database
                         comp_values = get_nutrition_values_of_foods(conn, nutrient_tuple)
                         optimum = solve_for_optimal_foods(remainder_df, comp_values)
+                        # TODO: create a table of the result to be displayed on the webpage
+                        variables = {v.name: [v.name[1:], v.varValue] for v in optimum.variables() if v.varValue > 0.0}
+                        var_table = pd.DataFrame.from_dict(variables, orient='index', columns=['Ruuan id', 'Määrä (grammaa)'])
                         
                     else:
                         flash('Valitse ruoka listasta.')
@@ -286,10 +289,12 @@ def nutrients():
                     if curs:
                         curs.close()
             
-            
+            pd_tables = [remainder_df[['name', 'target', 'eaten_total', 'remainder', 'max']],
+                         var_table]
+            html_tables = [t.to_html(classes='data', header = True, index = False) for t in pd_tables]
             return render_template('nutrients.html', title='Ravintoaineet',
                                    form=form, data_given=(food_id, amount, form.food.data),
-                                   tables=[remainder_df[['name', 'target', 'eaten_total', 'remainder', 'max']].to_html(classes='data', header = True, index = False)])
+                                   tables=html_tables)
         
         flash('Tarkista syöttämäsi arvot.')
         return render_template('nutrients.html', title='Ravintoaineet',

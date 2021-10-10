@@ -40,8 +40,7 @@ class FlexibleFloatField(FloatField):
 
 
 def get_food_names() -> list:
-    """
-    Get a list of all the food ids and names in the db.
+    """(Not currently used) Get a list of 5 food ids and names from the db.
 
     Returns:
         list: list of tuples of food ids and names as in (foodid, foodname)
@@ -63,8 +62,7 @@ def get_food_names() -> list:
                 curs.close()
 
 def get_rda(age:str) -> pd.DataFrame:
-    """
-    Get the RDA (recommended daily allowance) values for a specific demographic from a csv file
+    """Get the RDA (recommended daily allowance) values for a specific demographic from a csv file
     and put them in a Pandas DataFrame.
     
     Args:
@@ -80,8 +78,7 @@ def get_rda(age:str) -> pd.DataFrame:
     return rda
 
 def get_nutrition_values_of_foods(conn, nutrient_tuple) -> pd.DataFrame:
-    """
-    Use the given database connection to extract the nutrition values for all foods except
+    """Use the given database connection to extract the nutrition values for all foods except
     for foods such as baby food, infant formulas, supplements, and weight loss preparations,
     and put them in a Pandas DataFrame with one row per food and nutrients as columns.
     
@@ -104,7 +101,7 @@ def get_nutrition_values_of_foods(conn, nutrient_tuple) -> pd.DataFrame:
     print(f"long_table.head: {long_table.head()}")
     print(long_table.shape)
     # transpose the dataframe from a form that has a single nutrient in single food per row
-    # to a format with all nutrients in one food in one row
+    # to a format with all nutrients in one food per row
     wide_table = pd.pivot(data=long_table, values='BESTLOC', index='FOODID', columns='EUFDNAME')
     print(f"wide_table.head: {wide_table.head()}")
     print(f"number of NaN values in wide_table: {wide_table.isnull().sum().sum()}")
@@ -116,13 +113,12 @@ def get_nutrition_values_of_foods(conn, nutrient_tuple) -> pd.DataFrame:
 
 
 def solve_for_optimal_foods(remainder_df, comp_values):
-    """
-    Given the input dataframes, return the PuLP result that optimises the foods
+    """Given the input dataframes, return the PuLP result that optimises the foods
     to be eaten to meet daily nutrients while minimising calorie intake
     
     Args:
         remainder_df: Pandas dataframe with the information for the case we want to solve:
-                      the target nutrient amounts and maximum amounts
+                      the target (minimum) nutrient amounts and maximum amounts
         comp_values: Pandas dataframe with the nutrient compositions of various foods
 
     Returns:
@@ -152,7 +148,6 @@ def solve_for_optimal_foods(remainder_df, comp_values):
 
     # Add constraints
     model += (lpSum(x.values()) <= 4000, "total_mass_of_food")
-    print("aaa")
     for f in x:
         model += (x[f] <= 800, f"mass_of_food_{f}")
         #print("bbb")
@@ -166,20 +161,31 @@ def solve_for_optimal_foods(remainder_df, comp_values):
         model += (lpSum([nutrient_values.loc[f][n] * x[f] for f in foods]) <= remainder_df.loc[n]["max"] - remainder_df.loc[n]["remainder"], f"max_of_{n}")
         #print("cccc")
     #model += (sum([1 for w in x.values() if w > 0]) <= 50, "max_number_of_foods")
-    print("ddd")
 
     # Set the objective
     model += lpSum(energy[f] * x[f] for f in foods)
-    print("eeee")
 
     # Solve the optimization problem
-    print("where are we?")
-    status = model.solve()
-    print("where are we now?")
+    #status = model.solve()
+    model.solve()
     print(f"status: {model.status}, {LpStatus[model.status]}")
     print(f"total calories: {model.objective.value()}")
     for var in model.variables():
         if var.value() != 0.0:
             print(f"{var.name}: {var.value()}")
     print("all done")
-    return status
+    return model
+
+def create_dfs_from_solution(conn, solution, eaten_df):
+    """Create pandas dataframes from PuLP solution variables
+    Args:
+        conn: database connection
+        solution: PuLP solution
+        eaten_df: Pandas df with the amounts of nutrients already eaten
+
+    Returns:
+        two DataFrames: df with foodid, foodname, amount
+                        df with eufdname, nutrient name, amount
+    """
+    #TODO
+    pass
