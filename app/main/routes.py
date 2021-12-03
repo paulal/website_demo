@@ -336,13 +336,12 @@ def scrooge():
         if form.validate_on_submit():
             start = form.start.data
             end = form.end.data
-            # change dates into datetime (with +23:59:59 in the end date
-            # in order to get full volume data for the last day if it's 
-            # within 90 days) and then into unix timestamps
+            # change dates into datetime (with +1 in the end date)
+            # and then into unix timestamps
             start_timestamp = datetime(start.year, start.month, start.day,
                                        tzinfo=timezone.utc).timestamp()
             print(f'start: {start_timestamp}')
-            end_timestamp = datetime(end.year, end.month, end.day, 23, 59, 59,
+            end_timestamp = datetime(end.year, end.month, end.day, 1,
                                      tzinfo=timezone.utc).timestamp()
             print(f'end: {end_timestamp}')
             params = {'vs_currency': 'eur', 'from': start_timestamp, 'to': end_timestamp}
@@ -358,18 +357,23 @@ def scrooge():
                                            form=form, dates=[start, end],
                                            daily_prices=daily_prices)
                 else:
-                    daily_prices = helpers.get_daily_prices(data['prices'])
+                    # calculate the numbers needed
+                    daily_prices = helpers.get_daily_values(data['prices'])
                     bear_length = helpers.get_bear_length(daily_prices)
-                    highest_volume = helpers.get_highest_volume(data['total_volumes'],
-                                                                daily_prices)
+                    daily_volumes = helpers.get_daily_values(data['total_volumes'])
+                    highest_volume = helpers.get_highest_volume(daily_volumes)
                     buy_sell = helpers.get_buy_and_sell_dates(daily_prices)
+                    return render_template('scrooge.html', title='Roope',
+                                           form=form, dates=[start, end],
+                                           daily_prices=daily_prices,
+                                           bear_length=bear_length,
+                                           highest_volume=highest_volume,
+                                           buy_sell=buy_sell,
+                                           daily_volumes=daily_volumes)
             else:
-                pass # TODO: what to return when API call was unsuccessful
-            return render_template('scrooge.html', title='Roope',
-                                   form=form, dates=[start, end],
-                                   daily_prices=daily_prices, bear_length=bear_length,
-                                   highest_volume=highest_volume,
-                                   buy_sell=buy_sell)
+                # API call was unsuccessful
+                return render_template('scrooge.html', title='Roope',
+                                   form=form, failure=True)
     
         else:
             flash('Tarkista syöttämäsi arvot.')

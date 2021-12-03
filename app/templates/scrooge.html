@@ -4,7 +4,7 @@
 
 <h1>Roope Ankan Bitcoin-selvitys</h1>
 <p>Anna päivämäärät, joiden väliseltä ajalta haluat tietoja Bitcoinin kehityksestä.</p>
-<p>Kurssitietojen lähde: coingecko.com</p>
+<p>Kurssitietojen lähde: <a href="https://www.coingecko.com/">coingecko.com</a></p>
 <div class="row">
     <div class="col-md-5">
         <form action="" method="post" novalidate>
@@ -27,34 +27,43 @@
         </div>
     </div>
     <br>
-{% if dates %}
-    <br>
+{% if failure %}
+    Jostain syystä API-kutsu epäonnistui. Yritä hetken kuluttua uudelleen.
+{% elif dates %}
     Aikaväli: {{ dates[0].strftime('%-d.%-m.%Y') }} - {{ dates[1].strftime('%-d.%-m.%Y') }}</br>
 
     {% if daily_prices|length > 0 %}
         <br>
-        Aikavälin hinnat:<br>
-        {% for day in daily_prices %}
-            {{ day[0] }}: {{ day[1] }}<br>
-        {% endfor %}
-        <br>
         {% if daily_prices|length == bear_length + 1 %}
-            Bear_length: {{ bear_length }}<br>
-            Hinta laski koko tarkastelujakson ajan eli {{ bear_length }} päivää. Tällä jaksolla ei kannata ostaa eikä myydä.
+            Hinta laski koko tarkastelujakson ajan eli <strong>{{ bear_length }} päivän</strong> ajan. Tällä jaksolla ei kannata ostaa eikä myydä.
+            
         {% elif bear_length == 0 %}
-            Bear_length: {{ bear_length }}<br>
             Hinta ei laskenut tarkastelujaksolla kertaakaan.
             Parasta on siis ostaa ensimmäisenä päivänä ({{ buy_sell[0].strftime('%-d.%-m.%Y') }}) ja myydä viimeisenä ({{ buy_sell[1].strftime('%-d.%-m.%Y') }}).
+            
         {% else %}
             Pisin yhtämittainen laskujakso oli <strong>{{ bear_length }} päivän</strong> pituinen.<br>
             Parhaan voiton saa, kun <strong>ostaa {{ buy_sell[0].strftime('%-d.%-m.%Y') }} ja myy {{ buy_sell[1].strftime('%-d.%-m.%Y') }}</strong>.
         {% endif %}
         <br>
-        Jakson suurin päivävolyymi oli <strong>{{ highest_volume[0].strftime('%-d.%-m.%Y') }}: {{ '{:.0f}'.format(highest_volume[1]) }} €</strong>.
+        Jakson suurin päivävolyymi oli <strong>{{ highest_volume[0].strftime('%-d.%-m.%Y') }}: {{ '{:,.0f}'.format(highest_volume[1]) }} €</strong>.
     {% else %}
         <br>
         Tältä aikaväliltä ei löydy tietoja. Valitse eri aikaväli.
+    
     {% endif %}
+    <br>
+    <br>
+    <!-- Aikavälin hinnat:<br>
+    {% for day in daily_prices %}
+        {{ day[0] }}: {{ day[1] }}<br>
+    {% endfor %}
+    <br>
+    Aikavälin volyymit:<br>
+    {% for day in daily_volumes %}
+        {{ day[0] }}: {{ day[1] }}<br>
+    {% endfor %} -->
+
 {% endif %}
 
 

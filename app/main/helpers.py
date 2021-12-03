@@ -198,7 +198,7 @@ def create_dfs_from_solution(conn, solution, eaten_df):
 
 
 def get_api_response(url:str, payload:dict) -> dict:
-    """Download the content from an API and returns a dictionary or None.
+    """Download the content from an API and return a dictionary.
 
     Args:
         url (str): API endpoint
@@ -228,31 +228,31 @@ def get_api_response(url:str, payload:dict) -> dict:
         return {}
 
 
-def get_daily_prices(prices:list) -> list:
-    """Filter the price data to only keep one price per day.
+def get_daily_values(data:list) -> list:
+    """Filter the price/volume data to only keep one value per day.
 
     Args:
-        prices (list): all price data received from the API as a list of lists
+        data (list): all price/volume data received from the API as a list of lists
 
     Returns:
-        daily_prices (list): filtered list of lists with only one entry per day
+        daily_values (list): filtered list of lists with only one entry per day
     """
-    daily_prices = []
+    daily_values = []
     # I assume the prices returned by the API are in chronological order
     # and only take the first price for each day.
     # The timestamps include microseconds -> divide by 1000 to get the correct dates.
     # First, get the very first item in the list
-    daily_prices.append([datetime.utcfromtimestamp(prices[0][0] / 1000).date(), prices[0][1]])
-    print(f'daily_price list with the first item: {daily_prices}')
-    # Then, those among the rest of the items that are from a different day
-    for price in prices[1:]:
-        day = datetime.utcfromtimestamp(price[0] / 1000).date()
-        print(f'the next price: {day} {price[1]}')
-        if day > daily_prices[-1][0]:
+    daily_values.append([datetime.utcfromtimestamp(data[0][0] / 1000).date(), data[0][1]])
+    print(f'daily_values list with the first item: {daily_values}')
+    # Then, append the first value for each new day
+    for item in data[1:]:
+        day = datetime.utcfromtimestamp(item[0] / 1000).date()
+        print(f'the next item: {day} {item[1]}')
+        if day > daily_values[-1][0]:
             print(f'day added: {day}')
-            daily_prices.append([day, price[1]])
-    print(f'daily prices to return: {daily_prices}')
-    return daily_prices
+            daily_values.append([day, item[1]])
+    print(f'daily values to return: {daily_values}')
+    return daily_values
 
 
 def get_bear_length(prices:list) -> int:
@@ -279,39 +279,25 @@ def get_bear_length(prices:list) -> int:
     return max
 
 
-def get_highest_volume(volumes:list, prices:list) -> tuple:
+def get_highest_volume(volumes:list) -> list:
     """Get the date with the highest trading volume and the volume in euros.
 
     Args:
-        volumes (list): timestamps and their associated trading volumes as a list of lists
-        prices (list): dates and associated prices as a list of lists
+        volumes (list): dates and their associated trading volumes as a list of lists
 
     Returns:
-        highest_volume (tuple): the date with highest volume and the volume in euros
+        highest_volume (list): the date with highest volume and the volume in euros
     """
     print(f'volumes: {volumes}')
-    # create a defaultdict with volumes grouped by day
-    grouped = defaultdict(lambda: 0)
-    for timestamp, vol in volumes:
-        day = datetime.utcfromtimestamp(timestamp / 1000).date()
-        grouped[day] += vol
-    print(f'grouped volumes: {grouped}')
+    # set the first day as the starting point
+    max = volumes[0]
+    for day in volumes[1:]:
+        if day[1] > max[1]:
+            print(f'new max: {day}')
+            max = day
+    print(f'max: {max}')
     
-    # get the date with biggest volume and the volume
-    max_vol_date = max(grouped, key=grouped.get)
-    print(f'max_vol_date: {max_vol_date}')
-    max_vol = grouped[max_vol_date]
-    print(f'max_vol: {max_vol}')
-    
-    # get the price for that day
-    for sublist in prices:
-        if sublist[0] == max_vol_date:
-            price = sublist[1]
-            print(f'price for the day: {price}')
-            break
-    
-    print(f'max vol in euros: {max_vol * price}')
-    return max_vol_date, max_vol * price
+    return max
 
 
 def get_buy_and_sell_dates(prices:list) -> tuple:
@@ -321,7 +307,7 @@ def get_buy_and_sell_dates(prices:list) -> tuple:
         prices (list): dates and associated prices as a list of lists
 
     Returns:
-        buy_sell_dates (tuple): the dates to buy and sell
+        buy and sell dates (tuple): the dates on which to buy and sell
     """
     # set the first day as a starting point
     start = prices[0]
@@ -329,7 +315,7 @@ def get_buy_and_sell_dates(prices:list) -> tuple:
     max_so_far = [start, end, 0]
     # find the best days to buy and sell
     for sublist in prices[1:]:
-        # update the endpoint if price goes above endpoint
+        # update the endpoint if price rises above endpoint
         if sublist[1] > end[1]:
             end = sublist
             diff = end[1] - start[1]
