@@ -1,9 +1,14 @@
 import sqlite3
+from datetime import datetime
+from operator import itemgetter
+from collections import defaultdict
 
 from wtforms import FloatField
 import pandas as pd
 from pulp import LpMinimize, LpProblem, LpStatus, lpSum, LpVariable
-
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 
 omitted_food_types = ('BABYFTOT', 
@@ -176,6 +181,7 @@ def solve_for_optimal_foods(remainder_df, comp_values):
     print("all done")
     return model
 
+
 def create_dfs_from_solution(conn, solution, eaten_df):
     """Create pandas dataframes from PuLP solution variables
     Args:
@@ -189,3 +195,154 @@ def create_dfs_from_solution(conn, solution, eaten_df):
     """
     #TODO
     pass
+
+
+def get_api_response(url:str, payload:dict) -> dict:
+    """Download the content from an API and returns a dictionary or None.
+
+    Args:
+        url (str): API endpoint
+        payload (dict): parameters for the API call
+
+    Returns:
+        content (dict): the contents of API response (or {} if something went wrong)
+    """
+    # retry functionality to avoid timeout errors
+    session = requests.Session()
+    retry = Retry(total=3, backoff_factor=1)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    
+    try:
+        response = session.get(url, params=payload)
+        if response.status_code == 200:
+            content = response.json()
+            print(f'content: {content}')
+            return content
+        else:
+            print('Something went wrong.')
+            return {}
+    except MaxRetryError:
+        print('Max retries')
+        return {}
+
+
+def get_daily_prices(prices:list) -> list:
+    """Filter the price data to only keep one price per day.
+
+    Args:
+        prices (list): all price data received from the API as a list of lists
+
+    Returns:
+        daily_prices (list): filtered list of lists with only one entry per day
+    """
+    daily_prices = []
+    # I assume the prices returned by the API are in chronological order
+    # and only take the first price for each day.
+    # The timestamps include microseconds -> divide by 1000 to get the correct dates.
+    # First, get the very first item in the list
+    daily_prices.append([datetime.utcfromtimestamp(prices[0][0] / 1000).date(), prices[0][1]])
+    print(f'daily_price list with the first item: {daily_prices}')
+    # Then, those among the rest of the items that are from a different day
+    for price in prices[1:]:
+        day = datetime.utcfromtimestamp(price[0] / 1000).date()
+        print(f'the next price: {day} {price[1]}')
+        if day > daily_prices[-1][0]:
+            print(f'day added: {day}')
+            daily_prices.append([day, price[1]])
+    print(f'daily prices to return: {daily_prices}')
+    return daily_prices
+
+
+def get_bear_length(prices:list) -> int:
+    """Get the length of the longest streak of diminishing prices.
+
+    Args:
+        prices (list): list of daily values
+
+    Returns:
+        bear_length (int): the longest streak of diminishing prices
+    """
+    counter = 0
+    max = 0
+    for i in range(len(prices) - 1):
+        print(f'i: {i}')
+        if prices[i + 1][1] < prices[i][1]:
+            counter += 1
+            print(f'counter = {counter}')
+            if counter > max:
+                max = counter
+                print(f'new max = {max}')
+        else:
+            counter = 0
+    return max
+
+
+def get_highest_volume(volumes:list, prices:list) -> tuple:
+    """Get the date with the highest trading volume and the volume in euros.
+
+    Args:
+        volumes (list): timestamps and their associated trading volumes as a list of lists
+        prices (list): dates and associated prices as a list of lists
+
+    Returns:
+        highest_volume (tuple): the date with highest volume and the volume in euros
+    """
+    print(f'volumes: {volumes}')
+    # create a defaultdict with volumes grouped by day
+    grouped = defaultdict(lambda: 0)
+    for timestamp, vol in volumes:
+        day = datetime.utcfromtimestamp(timestamp / 1000).date()
+        grouped[day] += vol
+    print(f'grouped volumes: {grouped}')
+    
+    # get the date with biggest volume and the volume
+    max_vol_date = max(grouped, key=grouped.get)
+    print(f'max_vol_date: {max_vol_date}')
+    max_vol = grouped[max_vol_date]
+    print(f'max_vol: {max_vol}')
+    
+    # get the price for that day
+    for sublist in prices:
+        if sublist[0] == max_vol_date:
+            price = sublist[1]
+            print(f'price for the day: {price}')
+            break
+    
+    print(f'max vol in euros: {max_vol * price}')
+    return max_vol_date, max_vol * price
+
+
+def get_buy_and_sell_dates(prices:list) -> tuple:
+    """Get the buy and sell dates for maximum profit.
+
+    Args:
+        prices (list): dates and associated prices as a list of lists
+
+    Returns:
+        buy_sell_dates (tuple): the dates to buy and sell
+    """
+    # set the first day as a starting point
+    start = prices[0]
+    end = prices[0]
+    max_so_far = [start, end, 0]
+    # find the best days to buy and sell
+    for sublist in prices[1:]:
+        # update the endpoint if price goes above endpoint
+        if sublist[1] > end[1]:
+            end = sublist
+            diff = end[1] - start[1]
+            # if diff is bigger than the current max diff, update the max
+            if diff > max_so_far[2]:
+                max_so_far[0] = start
+                max_so_far[1] = end
+                max_so_far[2] = diff
+        # start over if price goes below start value
+        elif sublist[1] < start[1]:
+            start = sublist
+            end = sublist
+    print(f'max_so_far to return: {max_so_far}')
+    return max_so_far[0][0], max_so_far[1][0]
+            
+            

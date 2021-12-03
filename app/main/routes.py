@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, timezone
 import re
 from io import BytesIO
 import random
@@ -16,8 +16,8 @@ import pandas as pd
 import pulp
 
 from app.main import bp
-from app.main.forms import FinnaForm, PlottingForm, NutrientForm
-from app.main.helpers import get_rda, get_nutrition_values_of_foods, solve_for_optimal_foods
+from app.main.forms import FinnaForm, PlottingForm, NutrientForm, ScroogeForm
+import app.main.helpers as helpers
 
 
 # define routes
@@ -31,6 +31,7 @@ def index():
 def other_page(page_name):
     response = make_response('The page named %s does not exist.' % page_name, 404)
     return response
+
 
 @bp.route('/wikipedia_page')
 def wikipedia_page():
@@ -142,7 +143,6 @@ def finna():
 def plotting():
     if request.method == 'GET':
         form = PlottingForm()
-
         return render_template('plotting.html', title='Kuvaaja',
                                form=form)
     elif request.method == 'POST':
@@ -233,10 +233,9 @@ def nutrients():
                                form=form)
     elif request.method == 'POST':
         form = NutrientForm()
-        
         if form.validate_on_submit():
             print('form validated')
-            rda = get_rda("nkeski") # TODO: add a check for user-provided sex & age
+            rda = helpers.get_rda("nkeski") # TODO: add a check for user-provided sex & age
             print(rda.head())
             nutrient_tuple = tuple(rda["EUFDNAME"])
             print(f"nutrient_tuple: {nutrient_tuple}")
@@ -271,8 +270,8 @@ def nutrients():
                         remainder_df["remainder"] = remainder_df["target"] - remainder_df["eaten_total"]
                         print(f"remainder_df.head: {remainder_df.head()}")
                         # get the nutrition values of foods from the database
-                        comp_values = get_nutrition_values_of_foods(conn, nutrient_tuple)
-                        optimum = solve_for_optimal_foods(remainder_df, comp_values)
+                        comp_values = helpers.get_nutrition_values_of_foods(conn, nutrient_tuple)
+                        optimum = helpers.solve_for_optimal_foods(remainder_df, comp_values)
                         # TODO: create a table of the result to be displayed on the webpage
                         variables = {v.name: [v.name[1:], v.varValue] for v in optimum.variables() if v.varValue > 0.0}
                         var_table = pd.DataFrame.from_dict(variables, orient='index', columns=['Ruuan id', 'Määrä (grammaa)'])
@@ -326,3 +325,53 @@ def autocomplete_food():
                 curs.close()
 
 
+@bp.route('/scrooge', methods=['GET', 'POST'])
+def scrooge():
+    if request.method == 'GET':
+        form = ScroogeForm()
+        return render_template('scrooge.html', title='Roope',
+                               form=form)
+    elif request.method == 'POST':
+        form = ScroogeForm()
+        if form.validate_on_submit():
+            start = form.start.data
+            end = form.end.data
+            # change dates into datetime (with +23:59:59 in the end date
+            # in order to get full volume data for the last day if it's 
+            # within 90 days) and then into unix timestamps
+            start_timestamp = datetime(start.year, start.month, start.day,
+                                       tzinfo=timezone.utc).timestamp()
+            print(f'start: {start_timestamp}')
+            end_timestamp = datetime(end.year, end.month, end.day, 23, 59, 59,
+                                     tzinfo=timezone.utc).timestamp()
+            print(f'end: {end_timestamp}')
+            params = {'vs_currency': 'eur', 'from': start_timestamp, 'to': end_timestamp}
+            # call a helper function that gets the data from the API
+            data = helpers.get_api_response('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range',
+                                    params)
+            if data != {}:
+                # check that there is data for the given range
+                print(f"data['prices']: {data['prices']}")
+                if data['prices'] == []:
+                    daily_prices = []
+                    return render_template('scrooge.html', title='Roope',
+                                           form=form, dates=[start, end],
+                                           daily_prices=daily_prices)
+                else:
+                    daily_prices = helpers.get_daily_prices(data['prices'])
+                    bear_length = helpers.get_bear_length(daily_prices)
+                    highest_volume = helpers.get_highest_volume(data['total_volumes'],
+                                                                daily_prices)
+                    buy_sell = helpers.get_buy_and_sell_dates(daily_prices)
+            else:
+                pass # TODO: what to return when API call was unsuccessful
+            return render_template('scrooge.html', title='Roope',
+                                   form=form, dates=[start, end],
+                                   daily_prices=daily_prices, bear_length=bear_length,
+                                   highest_volume=highest_volume,
+                                   buy_sell=buy_sell)
+    
+        else:
+            flash('Tarkista syöttämäsi arvot.')
+            return render_template('scrooge.html', title='Roope',
+                                   form=form)
