@@ -2,10 +2,12 @@
 
 import unittest
 from unittest.mock import patch, Mock
+import datetime
 
 import pandas as pd
 
-from helpers import get_rda, get_nutrition_values_of_foods, solve_for_optimal_foods
+from helpers import get_rda, get_nutrition_values_of_foods, solve_for_optimal_foods, \
+     get_daily_values, get_bear_length, get_buy_and_sell_dates
 
 
 class HelperTest(unittest.TestCase):
@@ -23,6 +25,64 @@ class HelperTest(unittest.TestCase):
         self.assertEqual(actual.loc[0, 'target'], 900)
         self.assertEqual(actual.loc[1, 'target'], 10)
         self.assertEqual(actual.loc[2, 'max'], 250)
+    
+    def test_get_daily_values(self):
+        """Get the first and only the first value for each day"""
+        data = [
+            [
+              1638396252313,
+              50416.662545018866
+            ],
+            [
+              1638399794129,
+              50473.418293502924
+            ],
+            [
+              1638403476369,
+              50506.910551023844
+            ],
+            [
+              1638407244512,
+              50299.432691457565
+            ],
+            [
+              1638486031753,
+              50349.270930451385
+            ],
+            [
+              1638489808780,
+              49974.160510668
+            ]
+          ]
+        actual = get_daily_values(data)
+        
+        self.assertEqual(actual, [[datetime.date(2021, 12, 1), 50416.662545018866],
+                                  [datetime.date(2021, 12, 2), 50506.910551023844],
+                                  [datetime.date(2021, 12, 3), 49974.160510668]])
+    
+    def test_get_bear_length(self):
+        prices = [[datetime.date(2021, 3, 1), 49493198447.75872],
+                  [datetime.date(2021, 3, 2), 51389538313.89711],
+                  [datetime.date(2021, 3, 3), 44001647654.76413],
+                  [datetime.date(2021, 3, 4), 48996964876.455315],
+                  [datetime.date(2021, 3, 5), 50768369805.09877],
+                  [datetime.date(2021, 3, 6), 47264632660.507416],
+                  [datetime.date(2021, 3, 7), 34767011233.68442]]
+        actual = get_bear_length(prices)
+        self.assertEqual(actual, 2)
+    
+    def test_get_buy_and_sell_dates(self):
+        prices = [[datetime.date(2021, 3, 1), 49493198447.75872],
+                  [datetime.date(2021, 3, 2), 51389538313.89711],
+                  [datetime.date(2021, 3, 3), 44001647654.76413],
+                  [datetime.date(2021, 3, 4), 48996964876.455315],
+                  [datetime.date(2021, 3, 5), 50768369805.09877],
+                  [datetime.date(2021, 3, 6), 47264632660.507416],
+                  [datetime.date(2021, 3, 7), 34767011233.68442],
+                  [datetime.date(2021, 3, 7), 34767011233.68442],
+                  [datetime.date(2021, 3, 8), 38614211636.00619]]
+        actual = get_buy_and_sell_dates(prices)
+        self.assertEqual(actual, (datetime.date(2021, 3, 3), datetime.date(2021, 3, 5)))
         
 
 if __name__ == '__main__':

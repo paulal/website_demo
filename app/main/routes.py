@@ -349,16 +349,17 @@ def scrooge():
             data = helpers.get_api_response('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range',
                                     params)
             if data != {}:
-                # check that there is data for the given range
-                print(f"data['prices']: {data['prices']}")
-                if data['prices'] == []:
+                prices = data['prices']
+                print(f"data['prices']: {prices}")
+                # check if there is data for the given range
+                if prices == []:
                     daily_prices = []
                     return render_template('scrooge.html', title='Roope',
                                            form=form, dates=[start, end],
                                            daily_prices=daily_prices)
                 else:
                     # calculate the numbers needed
-                    daily_prices = helpers.get_daily_values(data['prices'])
+                    daily_prices = helpers.get_daily_values(prices)
                     bear_length = helpers.get_bear_length(daily_prices)
                     daily_volumes = helpers.get_daily_values(data['total_volumes'])
                     highest_volume = helpers.get_highest_volume(daily_volumes)
