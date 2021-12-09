@@ -26,6 +26,10 @@ class HelperTest(unittest.TestCase):
         self.assertEqual(actual.loc[1, 'target'], 10)
         self.assertEqual(actual.loc[2, 'max'], 250)
     
+    def get_nutrition_values_of_foods(self):
+        """Make sure unwanted foods are omitted"""
+        pass
+    
     def test_get_daily_values(self):
         """Get the first and only the first value for each day"""
         data = [

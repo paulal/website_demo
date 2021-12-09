@@ -11,30 +11,30 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
 
-omitted_food_types = ('BABYFTOT', 
-                      'BABMEATD',
-                      'BABFISHD',
-                      'BABMILPO',
-                      'BABWATPO',
-                      'BABFRUB',
-                      'BABVEGE',
-                      'BABMIFRU',
-                      'BABOTHER',
-                      'MMILK',
-                      'INFMILK',
-                      'CASMILK',
-                      'PREMILK',
-                      'SOYMILK',
-                      'WHEYMILK',
-                      'AMINMILK',
-                      'SPECTOT',
-                      'SPECSUPP',
-                      'MEALREP',
-                      'SPORTFOO',
-                      'SPECFOOD',
-                      'DRINKART',
-                      'DRSPORT',
-                      'DRWATER')
+omitted_food_types = ("babyftot",
+                      "babmeatd",
+                      "babfishd",
+                      "babmilpo",
+                      "babwatpo",
+                      "babfrub",
+                      "babvege",
+                      "babmifru",
+                      "babother",
+                      "mmilk",
+                      "infmilk",
+                      "casmilk",
+                      "premilk",
+                      "soymilk",
+                      "wheymilk",
+                      "aminmilk",
+                      "spectot",
+                      "specsupp",
+                      "mealrep",
+                      "sportfoo",
+                      "specfood",
+                      "drinkart",
+                      "drsport",
+                      "drwater")
 
 class FlexibleFloatField(FloatField):
 
@@ -66,6 +66,7 @@ def get_food_names() -> list:
             if curs:
                 curs.close()
 
+
 def get_rda(age:str) -> pd.DataFrame:
     """Get the RDA (recommended daily allowance) values for a specific demographic from a csv file
     and put them in a Pandas DataFrame.
@@ -82,6 +83,7 @@ def get_rda(age:str) -> pd.DataFrame:
     rda = rda_selected.rename(columns={age: "target"})
     return rda
 
+
 def get_nutrition_values_of_foods(conn, nutrient_tuple) -> pd.DataFrame:
     """Use the given database connection to extract the nutrition values for all foods except
     for foods such as baby food, infant formulas, supplements, and weight loss preparations,
@@ -94,6 +96,8 @@ def get_nutrition_values_of_foods(conn, nutrient_tuple) -> pd.DataFrame:
     Returns:
         DataFrame: nutrient values for foods
     """
+    # the next line prints the full sql query if uncommented
+    #conn.set_trace_callback(print)
     # multiplying bestloc by 1.0 changes the decimal separator from comma to full stop, avoiding problems down the line...
     stmt = "SELECT component_value.foodid, component_value.eufdname, component_value.bestloc / 100.0 AS 'BESTLOC' " + \
            "FROM food JOIN component_value ON food.foodid=component_value.foodid " +\
@@ -182,11 +186,11 @@ def solve_for_optimal_foods(remainder_df, comp_values):
     return model
 
 
-def create_dfs_from_solution(conn, solution, eaten_df):
+def create_dfs_from_solution(conn, variables, eaten_df):
     """Create pandas dataframes from PuLP solution variables
     Args:
         conn: database connection
-        solution: PuLP solution
+        variables: the variables of a PuLP solution
         eaten_df: Pandas df with the amounts of nutrients already eaten
 
     Returns:
@@ -262,7 +266,7 @@ def get_bear_length(prices:list) -> int:
         prices (list): list of daily values
 
     Returns:
-        bear_length (int): the longest streak of diminishing prices
+        max (int): the longest streak of diminishing prices
     """
     counter = 0
     max = 0
@@ -283,10 +287,12 @@ def get_highest_volume(volumes:list) -> list:
     """Get the date with the highest trading volume and the volume in euros.
 
     Args:
-        volumes (list): dates and their associated trading volumes as a list of lists
+        volumes (list): dates and their associated trading volumes as a list of lists;
+                        the volumes are pre-filtered to include only the first value
+                        per day, similar to the prices.
 
     Returns:
-        highest_volume (list): the date with highest volume and the volume in euros
+        max (list): the date with highest volume and the volume in euros
     """
     print(f'volumes: {volumes}')
     # set the first day as the starting point
@@ -315,7 +321,7 @@ def get_buy_and_sell_dates(prices:list) -> tuple:
     max_so_far = [start, end, 0]
     # find the best days to buy and sell
     for sublist in prices[1:]:
-        # update the endpoint if price rises above endpoint
+        # update the end if price rises above current endpoint
         if sublist[1] > end[1]:
             end = sublist
             diff = end[1] - start[1]

@@ -272,7 +272,7 @@ def nutrients():
                         # get the nutrition values of foods from the database
                         comp_values = helpers.get_nutrition_values_of_foods(conn, nutrient_tuple)
                         optimum = helpers.solve_for_optimal_foods(remainder_df, comp_values)
-                        # TODO: create a table of the result to be displayed on the webpage
+                        # TODO: create a nice table of the result to be displayed on the webpage
                         variables = {v.name: [v.name[1:], v.varValue] for v in optimum.variables() if v.varValue > 0.0}
                         var_table = pd.DataFrame.from_dict(variables, orient='index', columns=['Ruuan id', 'Määrä (grammaa)'])
                         
