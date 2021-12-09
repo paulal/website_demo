@@ -25,4 +25,7 @@ Ravinteiden saanti:
     select among the existing options. Type an amount in the second box and click 'Laske'.
     You will get a list of suggested other foods to eat on top of the one you
     selected to meet the daily recommended allowance of a number of nutrients.
-    (This page is still under construction.)
+    (Note: This page is still under construction.)
+    
+Roopen Bitcoin-keinottelu:
+    A pre-assignment for the Vincit Rising Stars programme. Using the coingecko.com API to display some historical Bitcoin data.
