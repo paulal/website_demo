@@ -263,7 +263,8 @@ def get_bear_length(prices:list) -> int:
     """Get the length of the longest streak of diminishing prices.
 
     Args:
-        prices (list): list of daily values
+        prices (list): list of lists, with each sublist consisting of
+                       a date and the associated price
 
     Returns:
         max (int): the longest streak of diminishing prices
@@ -307,33 +308,35 @@ def get_highest_volume(volumes:list) -> list:
 
 
 def get_buy_and_sell_dates(prices:list) -> tuple:
-    """Get the buy and sell dates for maximum profit.
+    """Get the buy and sell dates with maximum price difference.
 
     Args:
-        prices (list): dates and associated prices as a list of lists
+        prices (list): list of lists, with each sublist consisting of
+                       a date and the associated price
 
     Returns:
         buy and sell dates (tuple): the dates on which to buy and sell
     """
     # set the first day as a starting point
-    start = prices[0]
-    end = prices[0]
-    max_so_far = [start, end, 0]
-    # find the best days to buy and sell
-    for sublist in prices[1:]:
-        # update the end if price rises above current endpoint
-        if sublist[1] > end[1]:
-            end = sublist
-            diff = end[1] - start[1]
+    start = prices[0]  # the first day in a date range
+    peak = prices[0]   # the day in a date range with the highest price
+    diff = 0           # the difference of the prices of the start date and peak date
+    max_so_far = [start, peak, diff]  # the dates with the biggest difference in prices
+    # find the highest price following the start date
+    for day in prices[1:]:
+        # update the peak if price rises above current peak value
+        if day[1] > peak[1]:
+            peak = day
+            diff = peak[1] - start[1]
             # if diff is bigger than the current max diff, update the max
             if diff > max_so_far[2]:
                 max_so_far[0] = start
-                max_so_far[1] = end
+                max_so_far[1] = peak
                 max_so_far[2] = diff
-        # start over if price goes below start value
-        elif sublist[1] < start[1]:
-            start = sublist
-            end = sublist
+        # if price goes below start value, start a new date range
+        elif day[1] < start[1]:
+            start = day
+            peak = day
     print(f'max_so_far to return: {max_so_far}')
     return max_so_far[0][0], max_so_far[1][0]
             
